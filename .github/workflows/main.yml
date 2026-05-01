@@ -1,0 +1,8 @@
+name: Mon Workflow Manuel
+on:
+  workflow_dispatch: # Permet le lancement manuel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello World"
