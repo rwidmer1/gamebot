@@ -1,8 +1,22 @@
-name: Mon Workflow Manuel
+name: GameBot Discord
+
 on:
-  workflow_dispatch: # Permet le lancement manuel
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
 jobs:
-  build:
+  reset-and-post:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Hello World"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - name: Reset disponibilités + poster question
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          QUESTION_CHANNEL_ID: ${{ secrets.QUESTION_CHANNEL_ID }}
+          RESULTS_CHANNEL_ID: ${{ secrets.RESULTS_CHANNEL_ID }}
+        run: node daily.js # <--- Ici, on lance bien daily.js
