@@ -1,0 +1,30 @@
+name: GameBot Discord
+
+on:
+  schedule:
+    # Reset + repost question chaque jour à minuit (heure Paris = UTC+2 en été, UTC+1 en hiver)
+    # GitHub Actions utilise UTC — ajuste selon ta saison :
+    # Été (CEST, UTC+2) : minuit Paris = 22:00 UTC
+    # Hiver (CET, UTC+1) : minuit Paris = 23:00 UTC
+    - cron: '0 22 * * *'   # Reset minuit + repost question
+
+  workflow_dispatch:         # Permet de lancer manuellement depuis GitHub
+
+jobs:
+  reset-and-post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm install
+
+      - name: Reset disponibilités + poster question
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          QUESTION_CHANNEL_ID: ${{ secrets.QUESTION_CHANNEL_ID }}
+          RESULTS_CHANNEL_ID: ${{ secrets.RESULTS_CHANNEL_ID }}
+        run: node bot.js
